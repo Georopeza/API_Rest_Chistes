@@ -1,6 +1,38 @@
 const axios =require('axios');
 const JokeModel = require ('../models/joke');
 module.exports = async (app) => {
+/**
+ * @swagger
+ * /joke:
+ *   get:
+ *     summary: Obtener un chiste según el tipo (Chuck, Dad, Propio)
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         required: true
+ *         description: El tipo de chiste (Chuck, Dad o Propio)
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - Chuck
+ *             - Dad
+ *             - Propio
+ *     responses:
+ *       200:
+ *         description: Chiste obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 joke:
+ *                   type: string
+ *       400:
+ *         description: Parámetro inválido
+ *       500:
+ *         description: Error al obtener chiste
+ */
+
     //Get para obtener los chistes dependiendo del parametro
     app.get('/joke', async (req, res) => {
     const { type } = req.query;  // El parámetro "type" (Chuck, Dad o Propio)
@@ -41,6 +73,50 @@ module.exports = async (app) => {
     return res.status(400).json({ message: 'Parámetro inválido. Usa "Chuck", "Dad" o "Propio"' });
     });
 
+/**
+ * @swagger
+ * /joke:
+ *   post:
+ *     summary: Crear un nuevo chiste
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *               author:
+ *                 type: string
+ *               rating:
+ *                 type: integer
+ *                 example: 8
+ *               category:
+ *                 type: string
+ *                 enum:
+ *                   - Dad joke
+ *                   - Humor Negro
+ *                   - Chistoso
+ *                   - Malo
+ *     responses:
+ *       201:
+ *         description: Chiste creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Chiste creado'
+ *                 id:
+ *                   type: string
+ *       400:
+ *         description: Parámetros inválidos o faltantes
+ *       500:
+ *         description: Error al guardar el chiste
+ */
     //Post para crear un nuevo chiste
     app.post('/joke', async (req, res) => {
         const { text, author = 'Se perdió en el Ávila como Led', rating, category } = req.body;
@@ -63,6 +139,50 @@ module.exports = async (app) => {
         }
     });
 
+/**
+ * @swagger
+ * /joke/{id}:
+ *   put:
+ *     summary: Actualizar un chiste por su ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del chiste a actualizar
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *               author:
+ *                 type: string
+ *               rating:
+ *                 type: integer
+ *               category:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Chiste actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 joke:
+ *                   type: object
+ *       404:
+ *         description: Chiste no encontrado
+ *       500:
+ *         description: Error al actualizar el chiste
+ */
     //PUT para actualizar chiste por su ID
             app.put('/joke/:id', async (req, res) => {
                 const { id } = req.params;
@@ -87,6 +207,26 @@ module.exports = async (app) => {
                 }
             });
 
+/**
+ * @swagger
+ * /joke/{id}:
+ *   delete:
+ *     summary: Eliminar un chiste por su ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del chiste a eliminar
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Chiste eliminado exitosamente
+ *       404:
+ *         description: Chiste no encontrado
+ *       500:
+ *         description: Error al eliminar el chiste
+ */
     //DELETE: Eliminar un chiste por su ID
     app.delete('/joke/:id', async (req, res) => {
         const { id } = req.params;
@@ -100,7 +240,34 @@ module.exports = async (app) => {
             return res.status(500).json({ message: 'Error al eliminar el chiste' });
         }
     });
-    
+
+/**
+ * @swagger
+ * /joke/{id}:
+ *   get:
+ *     summary: Obtener un chiste por su ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del chiste a obtener
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Chiste obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 joke:
+ *                   type: string
+ *       404:
+ *         description: Chiste no encontrado
+ *       500:
+ *         description: Error al obtener el chiste
+ */
     //GET: Obtener un chiste por su ID
     app.get('/joke/:id', async (req, res) => {
         const { id } = req.params;
@@ -116,6 +283,35 @@ module.exports = async (app) => {
         }
     });
 
+    /**
+ * @swagger
+ * /jokes/count/category/{category}:
+ *   get:
+ *     summary: Obtener la cantidad de chistes por categoría
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         required: true
+ *         description: La categoría de los chistes (Dad joke, Humor Negro, Chistoso, Malo)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Cantidad de chistes por categoría
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *       400:
+ *         description: Categoría inválida
+ *       404:
+ *         description: No hay chistes en la categoría especificada
+ *       500:
+ *         description: Error al contar los chistes
+ */
     // GET: Obtener la cantidad de chistes por categoría
     app.get('/jokes/count/category/:category', async (req, res) => {
         const { category } = req.params;
@@ -136,6 +332,37 @@ module.exports = async (app) => {
         }
     });
 
+/**
+ * @swagger
+ * /jokes/score/{rating}:
+ *   get:
+ *     summary: Obtener todos los chistes por puntaje
+ *     parameters:
+ *       - in: path
+ *         name: rating
+ *         required: true
+ *         description: El puntaje de los chistes (1-10)
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Chistes obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   joke:
+ *                     type: string
+ *       400:
+ *         description: Puntaje inválido (debe estar entre 1 y 10)
+ *       404:
+ *         description: No hay chistes con ese puntaje
+ *       500:
+ *         description: Error al obtener los chistes
+ */
     // GET: Obtener todos los chistes por puntaje
     app.get('/jokes/score/:rating', async (req, res) => {
         const { rating } = req.params;
@@ -155,7 +382,29 @@ module.exports = async (app) => {
         }
     });
 
-        // GET: Obtener todos los chistes
+/**
+ * @swagger
+ * /jokes:
+ *   get:
+ *     summary: Obtener todos los chistes
+ *     responses:
+ *       200:
+ *         description: Chistes obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   joke:
+ *                     type: string
+ *       404:
+ *         description: No hay chistes en la base de datos
+ *       500:
+ *         description: Error al obtener los chistes
+ */
+    // GET: Obtener todos los chistes
     app.get('/jokes', async (req, res) => {
         try {
             const jokes = await JokeModel.find();

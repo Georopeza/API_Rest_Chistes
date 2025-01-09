@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 const jokeRoutes = require('./routes/jokes');
+const swaggerDocs = require('./swagger.js');
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -19,6 +20,8 @@ mongoose.connect('mongodb://localhost:27017/jokesDB')
 
 // Definimos la ruta
 jokeRoutes(app);
+
+swaggerDocs(app);
 
 // Iniciar el servidor
 app.listen(port, () => {
