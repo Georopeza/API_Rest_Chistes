@@ -62,3 +62,27 @@ MediaSourceHandle.exports = (app) => {
             return res.status(500).json({ message: 'Error al guardar el chiste' });
         }
     });
+
+//PUT para actualizar chiste por su ID
+        app.put('/joke/:id', async (req, res) => {
+            const { id } = req.params;
+            const { text, author, rating, category } = req.body;
+    
+            try {
+                const joke = await JokeModel.findById(id);
+                if (!joke) {
+                    return res.status(404).json({ message: 'Chiste no encontrado' });
+                }
+    
+                // Actualizando los campos proporcionados
+                if (text) joke.text = text;
+                if (author) joke.author = author;
+                if (rating) joke.rating = rating;
+                if (category) joke.category = category;
+    
+                await joke.save();
+                return res.json({ message: 'Chiste actualizado', joke });
+            } catch (error) {
+                return res.status(500).json({ message: 'Error al actualizar el chiste' });
+            }
+        });
