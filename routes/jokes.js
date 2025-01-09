@@ -39,7 +39,7 @@ MediaSourceHandle.exports = (app) => {
     }
 
     return res.status(400).json({ message: 'Parámetro inválido. Usa "Chuck", "Dad" o "Propio"' });
-};
+
 
     //Post para crear un nuevo chiste
     app.post('/joke', async (req, res) => {
@@ -115,3 +115,43 @@ MediaSourceHandle.exports = (app) => {
             return res.status(500).json({ message: 'Error al obtener el chiste' });
         }
     });
+
+    // GET: Obtener la cantidad de chistes por categoría
+    app.get('/jokes/count/category/:category', async (req, res) => {
+        const { category } = req.params;
+
+        const validCategories = ['Dad joke', 'Humor Negro', 'Chistoso', 'Malo'];
+        if (!validCategories.includes(category)) {
+            return res.status(400).json({ message: 'Categoría inválida' });
+        }
+
+        try {
+            const count = await JokeModel.countDocuments({ category });
+            if (count === 0) {
+                return res.status(404).json({ message: `No hay chistes en la categoría "${category}"` });
+            }
+            return res.json({ count });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al contar los chistes por categoría' });
+        }
+    });
+
+    // GET: Obtener todos los chistes por puntaje
+    app.get('/jokes/score/:rating', async (req, res) => {
+        const { rating } = req.params;
+
+        if (isNaN(rating) || rating < 1 || rating > 10) {
+            return res.status(400).json({ message: 'Puntaje inválido. Debe estar entre 1 y 10' });
+        }
+
+        try {
+            const jokes = await JokeModel.find({ rating });
+            if (jokes.length === 0) {
+                return res.status(404).json({ message: `No hay chistes con puntaje ${rating}` });
+            }
+            return res.json({ jokes });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener chistes por puntaje' });
+        }
+    });
+};
