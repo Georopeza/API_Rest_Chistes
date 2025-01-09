@@ -154,4 +154,17 @@ module.exports = async (app) => {
             return res.status(500).json({ message: 'Error al obtener chistes por puntaje' });
         }
     });
+
+        // GET: Obtener todos los chistes
+    app.get('/jokes', async (req, res) => {
+        try {
+            const jokes = await JokeModel.find();
+            if (jokes.length === 0) {
+                return res.status(404).json({ message: 'Aún no hay chistes en la base de datos' });
+            }
+            return res.json({ jokes });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener todos los chistes' });
+        }
+    });
 };
