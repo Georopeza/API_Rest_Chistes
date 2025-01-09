@@ -40,9 +40,3 @@ Para el uso
     - *GET /joke/:id: Obtener un chiste por su ID.
     - *GET /jokes/count/category/:category: Obtener la cantidad de chistes por categoría.
     - *GET /jokes/score/:rating: Obtener todos los chistes con un puntaje específico.
-
-Para correr las pruebas se usaron herramientas como **Mocha* y *Chai*.
-
-Para correr las pruebas:
-
-npm test
