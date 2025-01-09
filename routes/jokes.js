@@ -154,4 +154,20 @@ MediaSourceHandle.exports = (app) => {
             return res.status(500).json({ message: 'Error al obtener chistes por puntaje' });
         }
     });
+
+    // GET: Obtener todos los chistes con todos sus datos
+    app.get('/jokes', async (req, res) => {
+        try {
+            const jokes = await JokeModel.find();  // Encuentra todos los chistes
+
+            if (jokes.length === 0) {
+                return res.status(404).json({ message: 'No hay chistes disponibles' });
+            }
+
+            return res.json({ jokes });  // Devuelve los chistes encontrados
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener los chistes' });
+        }
+    });
+
 };
