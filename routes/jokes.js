@@ -1,8 +1,8 @@
 const axios =require('axios');
-const JokerModel = require ('../models/joke');
-
-MediaSourceHandle.exports = async (app) => {
+const JokeModel = require ('../models/joke');
+module.exports = async (app) => {
     //Get para obtener los chistes dependiendo del parametro
+    app.get('/joke', async (req, res) => {
     const { type } = req.query;  // El parámetro "type" (Chuck, Dad o Propio)
     //Si es chuck
     if (type === 'Chuck') {
@@ -39,7 +39,7 @@ MediaSourceHandle.exports = async (app) => {
     }
 
     return res.status(400).json({ message: 'Parámetro inválido. Usa "Chuck", "Dad" o "Propio"' });
-
+    });
 
     //Post para crear un nuevo chiste
     app.post('/joke', async (req, res) => {
