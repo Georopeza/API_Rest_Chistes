@@ -18,6 +18,7 @@ Para usarlo:
     El servidor estará corriendo en el puerto 3000
 
 Para el uso
+    - *GET /jokes :Se obtienen todos los chistes almacenados en la base de datos
     - *GET /joke?type=Chuck: Se obtiene un chiste de Chuck Norris por la api.
     - *GET /joke?type=Dad: Se obtiene un "Dad Joke" de la api.
     - *GET /joke?type=Propio: Obtiene un chiste propio desde la base de datos.
