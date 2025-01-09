@@ -1,7 +1,7 @@
 const axios =require('axios');
 const JokerModel = require ('../models/joke');
 
-MediaSourceHandle.exports = (app) => {
+MediaSourceHandle.exports = async (app) => {
     //Get para obtener los chistes dependiendo del parametro
     const { type } = req.query;  // El parámetro "type" (Chuck, Dad o Propio)
     //Si es chuck
