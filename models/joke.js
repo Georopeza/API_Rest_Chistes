@@ -6,7 +6,5 @@ const jokeSchema = new mongoose.Schema({
     rating: { type: Number, required: true },
     category: { type: String, required: true, enum: ['Dad joke', 'Humor Negro', 'Chistoso', 'Malo'] }
 });
-
 const JokeModel = mongoose.model('Joke', jokeSchema);
-
 module.exports = JokeModel;
