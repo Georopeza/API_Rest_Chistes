@@ -1,0 +1,64 @@
+const axios =require('axios');
+const JokerModel = require ('../models/joke');
+
+MediaSourceHandle.exports = (app) => {
+    //Get para obtener los chistes dependiendo del parametro
+    const { type } = req.query;  // El parámetro "type" (Chuck, Dad o Propio)
+    //Si es chuck
+    if (type === 'Chuck') {
+        try {
+            const response = await axios.get('https://api.chucknorris.io/jokes/random');
+            return res.json({ joke: response.data.value });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener chiste de Chuck Norris API' });
+        }
+    }
+    //Si es Dad
+    if (type === 'Dad') {
+        try {
+            const response = await axios.get('https://icanhazdadjoke.com/', {
+                headers: { 'Accept': 'application/json' }
+            });
+            return res.json({ joke: response.data.joke });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener chiste de Dad Jokes API' });
+        }
+    }
+    //Si es propio
+    if (type === 'Propio') {
+        try {
+            const joke = await JokeModel.findOne().sort({ _id: -1 });  // Obtiene el chiste más reciente
+            if (joke) {
+                return res.json({ joke: joke.text });
+            } else {
+                return res.status(404).json({ message: 'Aun no hay chistes, cree uno' });
+            }
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al obtener chistes de la base de datos' });
+        }
+    }
+
+    return res.status(400).json({ message: 'Parámetro inválido. Usa "Chuck", "Dad" o "Propio"' });
+};
+
+    //Post para crear un nuevo chiste
+    app.post('/joke', async (req, res) => {
+        const { text, author = 'Se perdió en el Ávila como Led', rating, category } = req.body;
+
+        if (!text || !rating || !category) {
+            return res.status(400).json({ message: 'Texto, puntaje y categoría son requeridos' });
+        }
+
+        const validCategories = ['Dad joke', 'Humor Negro', 'Chistoso', 'Malo'];
+        if (!validCategories.includes(category)) {
+            return res.status(400).json({ message: 'Categoría inválida. Las categorías válidas son: Dad joke, Humor Negro, Chistoso, Malo' });
+        }
+
+        try {
+            const newJoke = new JokeModel({ text, author, rating, category });
+            await newJoke.save();
+            return res.status(201).json({ message: 'Chiste creado', id: newJoke._id });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al guardar el chiste' });
+        }
+    });
